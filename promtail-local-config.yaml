@@ -1,0 +1,108 @@
+---
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+positions:
+  filename: /tmp/positions.yaml
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+scrape_configs:
+
+- job_name: log-ungzip
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: log-ungzip
+      __path__: /var/data/ungzip/**
+- job_name: log-gzip
+  decompression:
+    enabled: true
+    format: gz
+  static_configs:
+  - targets:
+      - localhost
+    labels:
+      job: log-gzip
+      __path__: /var/data/gzip/**
+
+#- job_name: t-lcb-backend
+#  decompression:
+#    enabled: true
+#    format: gz
+#  static_configs:
+#  - targets:
+#      - localhost
+#    labels:
+#      job: t-lcb-backend
+#      __path__: /var/data/s3/log-ecs-clusters/t-lcb-backend*/**
+#
+#- job_name: t2-lcb-backend
+#  decompression:
+#    enabled: true
+#    format: gz
+#  static_configs:
+#  - targets:
+#      - localhost
+#    labels:
+#      job: t2-lcb-backend
+#      __path__: /var/data/s3/log-ecs-clusters/t2-lcb-backend*/**
+#
+#- job_name: b-lcb-backend
+#  decompression:
+#    enabled: true
+#    format: gz
+#  static_configs:
+#  - targets:
+#      - localhost
+#    labels:
+#      job: b-lcb-backend
+#      __path__: /var/data/s3/log-ecs-clusters/b-lcb-backend*/**
+#
+#- job_name: p-lcb-backend
+#  decompression:
+#    enabled: true
+#    format: gz
+#  static_configs:
+#  - targets:
+#      - localhost
+#    labels:
+#      job: p-lcb-backend
+#      __path__: /var/data/s3/log-ecs-clusters/p-lcb-backend*/**
+
+
+
+
+### read log from local folder, refer: https://grafana.com/docs/loki/latest/clients/promtail/
+#server:
+#  http_listen_port: 9080
+#  grpc_listen_port: 0
+#positions:
+#  filename: /var/lib/promtail/positions.yaml
+#clients:
+#  - url: http://localhost:3100/loki/api/v1/push
+#scrape_configs:
+#- job_name: system
+#  decompression:
+#    enabled: true
+#    initial_sleep: 10s
+#    format: gz
+#  static_configs:
+#  - targets:
+#      - localhost
+#    labels:
+#      job: varlogs
+#      __path__: /var/log/**.gz
+
+
+
+
+
+
+
+
+
+
+
+
+

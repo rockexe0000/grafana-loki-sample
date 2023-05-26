@@ -1,0 +1,129 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+#schema_config:
+#  configs:
+#    - from: 2020-10-24
+#      store: boltdb-shipper
+#      object_store: filesystem
+#      schema: v11
+#      index:
+#        prefix: index_
+#        period: 24h
+schema_config:
+  configs:
+    - from: 2021-08-01
+      store: boltdb-shipper
+      object_store: s3
+      schema: v11
+      index:
+        prefix: index_
+        period: 24h
+
+
+common:
+  path_prefix: /loki
+  replication_factor: 1
+  storage:
+    s3:
+      endpoint: minio:9000
+      insecure: true
+      bucketnames: loki-data
+      access_key_id: loki
+      secret_access_key: supersecret
+      s3forcepathstyle: true
+      #chunks_directory: /loki/chunks
+      #rules_directory: /loki/rules
+  ring:
+    kvstore:
+      store: inmemory
+#common:
+#  path_prefix: /loki
+#  replication_factor: 1
+#  storage:
+#    s3:
+#      endpoint: minio:9000
+#      insecure: true
+#      bucketnames: loki-data
+#      access_key_id: loki
+#      secret_access_key: supersecret
+#      s3forcepathstyle: true
+#  ring:
+#    kvstore:
+#      store: inmemory
+
+
+
+limits_config:
+  ingestion_rate_strategy: local
+  max_global_streams_per_user: 5000
+  max_query_length: 0
+  max_query_parallelism: 32
+  max_streams_per_user: 0
+  ingestion_rate_mb: 32
+  ingestion_burst_size_mb: 64
+
+
+#limits_config:
+#  #ingestion_rate_strategy: local # Default: global
+#  max_global_streams_per_user: 5000
+#  max_query_length: 0 # Default: 721h
+#  max_query_parallelism: 32 # Old Default: 14
+#  max_streams_per_user: 0 # Old Default: 10000
+
+
+
+ruler:
+  storage:
+    s3:
+      bucketnames: loki-ruler
+
+
+#---
+#server:
+#  http_listen_port: 3100
+#memberlist:
+#  join_members:
+#    - loki:7946
+#schema_config:
+#  configs:
+#    - from: 2021-08-01
+#      store: boltdb-shipper
+#      object_store: s3
+#      schema: v11
+#      index:
+#        prefix: index_
+#        period: 24h
+#common:
+#  path_prefix: /loki
+#  replication_factor: 1
+#  storage:
+#    s3:
+#      endpoint: minio:9000
+#      insecure: true
+#      bucketnames: loki-data
+#      access_key_id: loki
+#      secret_access_key: supersecret
+#      s3forcepathstyle: true
+#  ring:
+#    kvstore:
+#      store: memberlist
+#ruler:
+#  storage:
+#    s3:
+#      bucketnames: loki-ruler
+
+
+
+
+
+
+
+
+
+
+
+
+

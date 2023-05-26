@@ -1,0 +1,160 @@
+version: '3.5'
+services:
+
+#  fluentd:
+#    image: fluent/fluent-bit
+#    volumes:
+#        - ./conf:/fluent-bit/etc
+#    ports:
+#      - "24224:24224"
+#      - "24224:24224/udp"
+#    hostname: fluentd
+#    logging:
+#      driver: "json-file"
+#      options:
+#          max-size: 100m
+#          max-file: "5"
+#
+#  nginx:
+#    logging:
+#      driver: fluentd
+#      options:
+#        fluentd-address: localhost:24224
+#        tag: nginx
+#    image: nginx
+#    ports:
+#        - "8080:80"
+#    depends_on:
+#      - fluentd
+#    hostname: nginx
+#
+#  nginx2:
+#    logging:
+#      driver: fluentd
+#      options:
+#        fluentd-address: localhost:24224
+#        tag: nginx
+#    image: nginx
+#    ports:
+#        - "8081:80"
+#    depends_on:
+#        - fluentd
+#    hostname: nginx2
+
+
+
+
+
+
+
+  promtail:
+    image: grafana/promtail:2.8.2
+    volumes:
+      - ./promtail-local-config.yaml:/etc/promtail/config.yaml
+      - ./.minio-init/data:/var/data
+      - ./.minio-init/data/ungzip:/var/data/ungzip
+      - ./.minio-init/data/gzip:/var/data/gzip
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+
+
+
+  loki:
+    image: grafana/loki:2.8.2
+    volumes:
+      - ./loki-config.yaml:/etc/loki/config.yaml
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+
+
+
+#  minio-init:
+#    image: minio/mc:RELEASE.2023-05-04T18-10-16Z
+#    environment:
+#    - MINIO_ENDPOINT=http://minio:9000
+#    - MINIO_ACCESS_KEY=loki
+#    - MINIO_SECRET_KEY=supersecret
+#    - BUCKET=my-bucket
+#    - AWS_S3_ENDPOINT=https://s3.amazonaws.com
+#    - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+#    - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+#    - AWS_BUCKET=${AWS_BUCKET}
+#    volumes:
+#    - ./insertion.sh:/insertion.sh
+#    - ./.minio-init/data:/data
+#    entrypoint: /insertion.sh
+
+
+
+
+#  minio:
+#    image: minio/minio:RELEASE.2023-05-04T21-44-30Z
+#    entrypoint:
+#      - sh
+#      - -euc
+#      - |
+#        mkdir -p /data/loki-data && \
+#        mkdir -p /data/loki-ruler && \
+#        minio server /data --console-address ":9001"
+#    environment:
+#      - MINIO_ROOT_USER=loki
+#      - MINIO_ROOT_PASSWORD=supersecret
+#      - MINIO_PROMETHEUS_AUTH_TYPE=public
+#      - MINIO_UPDATE=off
+#    ports:
+#      - 9000:9000
+#      - 9001:9001
+#    volumes:
+#      - ./.data/minio:/data
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+#      interval: 15s
+#      timeout: 20s
+#      retries: 5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
