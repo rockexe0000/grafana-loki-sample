@@ -51,9 +51,10 @@ services:
     image: grafana/promtail:2.8.2
     volumes:
       - ./promtail-local-config.yaml:/etc/promtail/config.yaml
-      - ./.minio-init/data:/var/data
-      - ./.minio-init/data/ungzip:/var/data/ungzip
-      - ./.minio-init/data/gzip:/var/data/gzip
+      - ./data:/var/data
+      - ./data/ungzip:/var/data/ungzip
+      - ./data/gzip:/var/data/gzip
+      - ./data/p-lcb-backend:/var/data/p-lcb-backend
     command: -config.file=/etc/promtail/config.yaml
     depends_on:
       - loki
@@ -84,6 +85,21 @@ services:
       retries: 5
 
 
+#  aws-cli:
+#    image: amazon/aws-cli:2.11.25
+#    entrypoint: /downdoadS3Log.sh
+#    volumes:
+#      - ./downdoadS3Log.sh:/downdoadS3Log.sh
+#      - ./data/aws-cli:/var/data/aws-cli
+#      - ./data/gzip:/var/data/gzip
+#      - ./data/p-lcb-backend:/var/data/p-lcb-backend
+#    environment:
+#      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+#      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+#      - AWS_BUCKET=${AWS_BUCKET}
+
+
+
 
 
 
@@ -100,7 +116,7 @@ services:
 #    - AWS_BUCKET=${AWS_BUCKET}
 #    volumes:
 #    - ./insertion.sh:/insertion.sh
-#    - ./.minio-init/data:/data
+#    - ./data:/data
 #    entrypoint: /insertion.sh
 
 
