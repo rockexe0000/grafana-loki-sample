@@ -42,11 +42,11 @@ n_hour_ago=$((start_time - n * 60 * 60));
 
 n_hour_ago_path=$(date -d @$n_hour_ago +%Y/%m/%d/%H)
 
-for ((i=$n;i>=0;i--))
+for ((i=$n;i>=1;i--))
 do
   i_hour_ago=$((start_time - i * 60 * 60));
   i_hour_ago_path=$(date -d @$i_hour_ago +%Y/%m/%d/%H)
-  aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-ecsec2/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-ecsec2-*/$i_hour_ago_path/*" &
+  aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-fg-*/$i_hour_ago_path/*" &
 
 done
 

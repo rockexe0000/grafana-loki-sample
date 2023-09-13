@@ -10,7 +10,7 @@ echo "NOW=[$NOW]";
 
 
 
-
+echo "AWS_S3_ENDPOINT=[$AWS_S3_ENDPOINT]"
 
 
 mc alias set s3 "${AWS_S3_ENDPOINT}" "${AWS_ACCESS_KEY}" "${AWS_SECRET_KEY}"
@@ -31,6 +31,8 @@ mc alias set s3 "${AWS_S3_ENDPOINT}" "${AWS_ACCESS_KEY}" "${AWS_SECRET_KEY}"
 #mc find s3/"${AWS_BUCKET}" -path "*/$ONE_HOURS_AGO/*" --name "*" --exec "mc cp -q {} /data/{dir}/{base}"
 
 
+
+
 ### 抓前 ｎ 分鐘內的 log
 
 ### 1684293613
@@ -47,7 +49,7 @@ for ((i=$n;i>=0;i--))
 do
   i_minute_ago=$((start_time - i * 60));
   i_minute_ago_path=$(date -d @$i_minute_ago +%Y/%m/%d/%H/%M)
-  mc find s3/"${AWS_BUCKET}"/t2-lcb-backend-ecsec2/fluent-bit-logs -path "*/$i_minute_ago_path/*" --name "*" --exec "mc cp -q {} /data/{dir}/{base}" &
+  mc find s3/"${AWS_BUCKET}"/t-lcb-backend-fg/fluent-bit-logs -path "*/$i_minute_ago_path/*" --name "*" --exec "mc cp -q {} /data/{dir}/{base}" &
   #mc find s3/"${AWS_BUCKET}"/t-lcb-backend-fg/fluent-bit-logs -path "*/$i_minute_ago_path/*" --name "*" --exec "mc mirror --overwrite {} /data/{dir}/{base}"
 done
 
