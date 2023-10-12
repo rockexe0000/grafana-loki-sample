@@ -47,31 +47,39 @@ do
   i_hour_ago=$((start_time - i * 60 * 60));
   i_hour_ago_path=$(date -d @$i_hour_ago +%Y/%m/%d/%H)
   aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-fg-*/$i_hour_ago_path/*" &
-
 done
 
 wait
 
 
 
-
 ### download new Logs
+### 下載指定時間往前 n 分鐘內的 Log
 
 #cd $downdoadDir
 #mkdir -p fluent-bit-logs
 #cd fluent-bit-logs
 #
-#n=60
-#n_minute_ago=$((start_time - n * 60));
+#### 時間轉換網址 https://www.epochconverter.com/
+#one_time=$start_time;
+##one_time='1697077380';
+#
+#echo "one_time=[$one_time]"
+#
+#one_time_path=$(date -d @$one_time +%Y/%m/%d/%H/%M)
+#echo "one_time_path=[$one_time_path]"
+#
+#n=10
+#n_minute_ago=$((one_time - n * 60));
 #
 #n_minute_ago_path=$(date -d @$n_minute_ago +%Y/%m/%d/%H/%M)
 #
 #for ((i=$n;i>=0;i--))
 #do
-#  i_minute_ago=$((start_time - i * 60));
+#  i_minute_ago=$((one_time - i * 60));
 #  i_minute_ago_path=$(date -d @$i_minute_ago +%Y/%m/%d/%H/%M)
 #  #aws s3 cp s3://${AWS_BUCKET}/t-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "t-lcb-backend-fg-*/$i_minute_ago_path/*" &
-#  aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-ecsec2/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-ecsec2-*/$i_minute_ago_path/*" &
+#  aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-fg-*/$i_minute_ago_path/*" &
 #
 #done
 #
@@ -94,5 +102,15 @@ mv $downdoadDir/fluent-bit-logs/ $promtailDir/fluent-bit-logs/
 end_time=$(date +%s)
 runtime=$((end_time - start_time));
 printf "Execution time: %.6f seconds\n" $runtime
+
+
+
+
+#sleep 30m;
+#echo "exit_time=[$(date +%s)]";
+
+
+exit 0
+
 
 

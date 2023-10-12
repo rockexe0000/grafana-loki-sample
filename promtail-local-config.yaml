@@ -70,17 +70,47 @@ scrape_configs:
     - json:
         expressions:
           date:
+          level: level
+          msg:
+    - labels:
+        level:
+        msg:
     - timestamp:
         source: date
         #format: '2006-01-02T15:04:05.000000Z'
         format: RFC3339
+
+    #- match:
+    #    selector: '{msg="Request started"}'
+    #    action: keep
+    #    stages:
+    #    - json:
+    #        expressions:
+    #          msg: msg
+
+    #- match:
+    #    selector: '{level="50"}'
+    #    stages:
+    #      - json:
+    #          expressions:
+    #            level: level
+    #      - labels:
+    #          level: level
+
+    ### Request started , Request finished
+    ### RequestStart , RequestEnd
+    - match:
+        selector: '{msg!="RequestStart",msg!="RequestEnd",level!="50"}'
+        action: drop
+
+
+
   static_configs:
   - targets:
       - localhost
     labels:
       job: p-lcb-backend
-      __path__: /var/data/p-lcb-backend/**
-
+      __path__: /var/data/p-lcb-backend/**/*.log.gz
 
 
 
