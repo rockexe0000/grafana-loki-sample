@@ -15,6 +15,7 @@ scrape_configs:
     labels:
       job: log-ungzip
       __path__: /var/data/ungzip/**
+  
 - job_name: log-gzip
   decompression:
     enabled: true
@@ -26,6 +27,28 @@ scrape_configs:
       job: log-gzip
       __path__: /var/data/gzip/**
 
+
+########################################################
+#- job_name: mongodb-log
+#  pipeline_stages:
+#    - docker:
+#    - json:
+#        expressions:
+#          t_$date: qwedate
+#          msg:
+#    - labels:
+#        msg:
+#    - timestamp:
+#        source: qwedate
+#        #format: '2006-01-02T15:04:05.000000Z'
+#        format: RFC3339
+#  static_configs:
+#  - targets:
+#      - localhost
+#    labels:
+#      job: mongodb-log
+#      __path__: /var/data/mongodb-log/**
+########################################################
 
 
 #- job_name: t-lcb-backend
@@ -102,7 +125,12 @@ scrape_configs:
     - match:
         selector: '{msg!="RequestStart",msg!="RequestEnd",level!="50"}'
         action: drop
-
+    #- match:
+    #    selector: '{msg="RequestStart"} |~ ".ELB-HealthChecker.*"'
+    #    action: drop
+    #- match:
+    #    selector: '{msg="RequestEnd"} |~ ".ELB-HealthChecker.*"'
+    #    action: drop
 
 
   static_configs:

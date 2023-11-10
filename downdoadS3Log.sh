@@ -8,7 +8,8 @@ start_time=$(date +%s);
 NOW=$(date +"%Y/%m/%d/%H/%M/%S/%N")
 echo "NOW=[$NOW]";
 
-downdoadDir="/var/data/aws-cli"
+#downdoadDir="/var/data/aws-cli"
+downdoadDir="/var/data/p-lcb-backend"
 promtailDir="/var/data/p-lcb-backend"
 
 
@@ -32,21 +33,34 @@ mkdir -p $promtailDir/fluent-bit-logs
 
 
 ### download 1h new Logs
+### 下載指定時間往前 n 小時內的 Log
+### 時間轉換網址 https://www.epochconverter.com/
 
 cd $downdoadDir
 mkdir -p fluent-bit-logs
 cd fluent-bit-logs
 
+one_time=$start_time;
+#one_time='1699590000';
+
+echo "one_time=[$one_time]"
+
+one_time_path=$(date -d @$one_time +%Y/%m/%d/%H)
+echo "one_time_path=[$one_time_path]"
+
 n=1
-n_hour_ago=$((start_time - n * 60 * 60));
+n_hour_ago=$((one_time - n * 60 * 60));
 
 n_hour_ago_path=$(date -d @$n_hour_ago +%Y/%m/%d/%H)
 
 for ((i=$n;i>=1;i--))
 do
-  i_hour_ago=$((start_time - i * 60 * 60));
+  i_hour_ago=$((one_time - i * 60 * 60));
   i_hour_ago_path=$(date -d @$i_hour_ago +%Y/%m/%d/%H)
-  aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-fg-*/$i_hour_ago_path/*" &
+  #aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "p-lcb-backend-fg-*/$i_hour_ago_path/*" &
+  
+  aws s3 cp s3://${AWS_BUCKET}/p-lcb-backend-fg/fluent-bit-logs/ . --recursive --exclude "*" --include "logs.info/$i_hour_ago_path/*" &
+  
 done
 
 wait
@@ -55,21 +69,21 @@ wait
 
 ### download new Logs
 ### 下載指定時間往前 n 分鐘內的 Log
+### 時間轉換網址 https://www.epochconverter.com/
 
 #cd $downdoadDir
 #mkdir -p fluent-bit-logs
 #cd fluent-bit-logs
 #
-#### 時間轉換網址 https://www.epochconverter.com/
-#one_time=$start_time;
-##one_time='1697077380';
+##one_time=$start_time;
+#one_time='1699500000';
 #
 #echo "one_time=[$one_time]"
 #
 #one_time_path=$(date -d @$one_time +%Y/%m/%d/%H/%M)
 #echo "one_time_path=[$one_time_path]"
 #
-#n=10
+#n=7
 #n_minute_ago=$((one_time - n * 60));
 #
 #n_minute_ago_path=$(date -d @$n_minute_ago +%Y/%m/%d/%H/%M)
@@ -92,8 +106,8 @@ wait
 
 
 ### move new Logs
-cd ~
-mv $downdoadDir/fluent-bit-logs/ $promtailDir/fluent-bit-logs/
+#cd ~
+#mv $downdoadDir/fluent-bit-logs/ $promtailDir/fluent-bit-logs/
 
 
 
